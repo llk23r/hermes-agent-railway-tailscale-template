@@ -1,5 +1,5 @@
-#!/bin/sh
-set -eu
+#!/usr/bin/env bash
+set -euo pipefail
 umask 077
 
 HERMES_HOME="${HERMES_HOME:-/data/.hermes}"
@@ -76,6 +76,7 @@ tailscaled \
   --tun=userspace-networking \
   --socks5-server=127.0.0.1:1055 \
   >"$TS_STATE_DIR/tailscaled.log" 2>&1 &
+tailscaled_pid="$!"
 
 for _ in 1 2 3 4 5; do
   [ -S "$TS_SOCKET" ] && break
@@ -94,12 +95,15 @@ fi
 export PORT
 
 shutdown() {
+  trap - INT TERM
   [ -n "${nginx_pid:-}" ] && kill "$nginx_pid" 2>/dev/null || true
   [ -n "${gateway_pid:-}" ] && kill "$gateway_pid" 2>/dev/null || true
   [ -n "${dashboard_pid:-}" ] && kill "$dashboard_pid" 2>/dev/null || true
+  [ -n "${tailscaled_pid:-}" ] && kill "$tailscaled_pid" 2>/dev/null || true
+  wait 2>/dev/null || true
 }
 
-trap shutdown INT TERM
+trap 'shutdown; exit 143' INT TERM
 
 hermes gateway run &
 gateway_pid="$!"
@@ -113,4 +117,12 @@ if [ "$TS_SERVE_ENABLE" = "true" ]; then
   tailscale --socket="$TS_SOCKET" serve --bg "$TS_SERVE_TARGET"
 fi
 
-wait "$dashboard_pid"
+status=0
+wait -n "$tailscaled_pid" "$gateway_pid" "$dashboard_pid" "$nginx_pid" || status="$?"
+shutdown
+
+if [ "$status" -eq 0 ]; then
+  exit 1
+fi
+
+exit "$status"
