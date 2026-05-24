@@ -62,7 +62,7 @@ trap shutdown INT TERM
 hermes gateway run &
 gateway_pid="$!"
 
-hermes dashboard --host 127.0.0.1 --port "$PORT" --no-open --skip-build &
+hermes dashboard --host 127.0.0.1 --port "$PORT" --no-open &
 dashboard_pid="$!"
 
 wait "$dashboard_pid"
