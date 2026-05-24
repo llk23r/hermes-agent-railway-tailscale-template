@@ -1,6 +1,6 @@
 # Hermes Agent on Railway with Tailscale
 
-Minimal Railway worker for Hermes Agent behind Tailscale.
+Minimal Telegram worker for Hermes Agent behind Tailscale.
 
 ## Variables
 

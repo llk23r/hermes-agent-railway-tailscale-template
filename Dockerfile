@@ -32,6 +32,7 @@ RUN git init /tmp/hermes-agent && \
     git remote add origin https://github.com/NousResearch/hermes-agent.git && \
     git fetch --depth 1 origin "$HERMES_REF" && \
     git checkout --detach FETCH_HEAD && \
+    rm -rf plugins/platforms && \
     uv pip install --system --no-cache -e ".[web]" "python-telegram-bot[webhooks]==22.6" "qrcode==7.4.2" && \
     cd /tmp/hermes-agent/web && \
     npm install --no-audit --no-fund && \
