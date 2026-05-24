@@ -2,9 +2,12 @@
 set -eu
 
 HERMES_HOME="${HERMES_HOME:-/data/.hermes}"
+PORT="${PORT:-8080}"
 TS_STATE_DIR="${TS_STATE_DIR:-/data/tailscale}"
 TS_SOCKET="${TS_SOCKET:-/tmp/tailscaled.sock}"
 TS_HOSTNAME="${TS_HOSTNAME:-railway-hermes-agent}"
+TS_SERVE_ENABLE="${TS_SERVE_ENABLE:-true}"
+TS_SERVE_TARGET="${TS_SERVE_TARGET:-http://127.0.0.1:$PORT}"
 
 tailscale_up() {
   if [ -n "${TS_TAGS:-}" ]; then
@@ -45,4 +48,9 @@ else
   tailscale_up --auth-key="$TS_AUTHKEY"
 fi
 
+if [ "$TS_SERVE_ENABLE" = "true" ]; then
+  tailscale --socket="$TS_SOCKET" serve --bg "$TS_SERVE_TARGET"
+fi
+
+export PORT
 exec hermes gateway
