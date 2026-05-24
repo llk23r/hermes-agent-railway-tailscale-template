@@ -37,9 +37,7 @@ for _ in 1 2 3 4 5; do
   sleep 1
 done
 
-if tailscale --socket="$TS_SOCKET" status >/dev/null 2>&1; then
-  tailscale_up
-else
+if ! tailscale_up; then
   if [ -z "${TS_AUTHKEY:-}" ]; then
     echo "TS_AUTHKEY is required for first boot" >&2
     exit 1
