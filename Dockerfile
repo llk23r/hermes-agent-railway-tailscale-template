@@ -3,7 +3,7 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 ARG NODE_VERSION=22.22.3
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl ca-certificates git ffmpeg xz-utils && \
+    apt-get install -y --no-install-recommends curl ca-certificates git ffmpeg nginx-light xz-utils && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" && \
