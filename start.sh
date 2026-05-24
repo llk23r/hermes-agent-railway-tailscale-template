@@ -2,7 +2,7 @@
 set -eu
 
 HERMES_HOME="${HERMES_HOME:-/data/.hermes}"
-PORT="${PORT:-8080}"
+PORT="${PORT:-9119}"
 TS_STATE_DIR="${TS_STATE_DIR:-/data/tailscale}"
 TS_SOCKET="${TS_SOCKET:-/tmp/tailscaled.sock}"
 TS_HOSTNAME="${TS_HOSTNAME:-railway-hermes-agent}"
@@ -51,4 +51,18 @@ if [ "$TS_SERVE_ENABLE" = "true" ]; then
 fi
 
 export PORT
-exec hermes gateway
+
+shutdown() {
+  [ -n "${gateway_pid:-}" ] && kill "$gateway_pid" 2>/dev/null || true
+  [ -n "${dashboard_pid:-}" ] && kill "$dashboard_pid" 2>/dev/null || true
+}
+
+trap shutdown INT TERM
+
+hermes gateway run &
+gateway_pid="$!"
+
+hermes dashboard --host 127.0.0.1 --port "$PORT" --no-open --skip-build &
+dashboard_pid="$!"
+
+wait "$dashboard_pid"

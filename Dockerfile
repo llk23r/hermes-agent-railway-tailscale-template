@@ -1,7 +1,7 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl ca-certificates git ffmpeg && \
+    apt-get install -y --no-install-recommends curl ca-certificates git ffmpeg xz-utils && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSL https://tailscale.com/install.sh | sh
