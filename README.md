@@ -10,7 +10,7 @@ Required:
 
 Optional:
 
-- `TS_HOSTNAME`, default `railway-hermes-agent`
+- `TS_HOSTNAME`, default `hermes-agent`
 - `TS_TAGS`, example `tag:hermes-agent`
 - `TS_SERVE_ENABLE`, default `true`
 - `TS_PROXY_PORT`, default `9120`

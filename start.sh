@@ -1,11 +1,12 @@
 #!/bin/sh
 set -eu
+umask 077
 
 HERMES_HOME="${HERMES_HOME:-/data/.hermes}"
 PORT="${PORT:-9119}"
 TS_STATE_DIR="${TS_STATE_DIR:-/data/tailscale}"
 TS_SOCKET="${TS_SOCKET:-/tmp/tailscaled.sock}"
-TS_HOSTNAME="${TS_HOSTNAME:-railway-hermes-agent}"
+TS_HOSTNAME="${TS_HOSTNAME:-hermes-agent}"
 TS_SERVE_ENABLE="${TS_SERVE_ENABLE:-true}"
 TS_PROXY_PORT="${TS_PROXY_PORT:-9120}"
 TS_SERVE_TARGET="${TS_SERVE_TARGET:-http://127.0.0.1:$TS_PROXY_PORT}"
@@ -48,7 +49,7 @@ http {
 }
 EOF
 
-  nginx -t -c "$nginx_config"
+  nginx -t -q -c "$nginx_config"
   nginx -c "$nginx_config" -g "daemon off;" &
   nginx_pid="$!"
 }
